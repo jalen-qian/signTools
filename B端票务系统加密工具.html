@@ -1,0 +1,59 @@
+<html>
+<body>
+<form style="text-align: center">
+    <label>Secret</label> <input type="text" id="Secret" value="123456"><br>
+    <label>Version</label> <input type="text" id="Version" value="1.0"><br>
+    <label>TimesStamp</label> <input type="text" id="TimesStamp"><br>
+    <label>PartnerId</label> <input type="text" id="PartnerId" value="1_1_67"><br>
+    <label>method</label> <select id="method">
+    <option value="Order">创建订单（Order）</option>
+    <option value="QueryOrder">查询订单（QueryOrder）</option>
+    <option value="RefundOrder">申请退款（RefundOrder）</option>
+    <option value="TicketList">门票列表（TicketList）</option>
+    <option value="ConsumeNotice">消息通知（ConsumeNotice）</option>
+    <option value="RefundNotice">退款通知（RefundNotice）</option>
+    <option value="ScenicList">景区列表（ScenicList）</option>
+    <option value="AsyncConfirmNotice">异步确认通知（AsyncConfirmNotice）</option>
+    <option value="FunctionList">景区功能（FunctionList）</option>
+</select><br><br>
+    <button type="button" id="refreshTime">刷新时间戳</button><br><br>
+    <button type="button" id="getResult">获取结果</button>
+    <br><br>
+    <label>结果：</label> <textarea  id="result" cols="60" rows="30"></textarea><br>
+</form>
+</body>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="md5.js"></script>
+<script>
+    var Secret = $('#Secret');
+    var Version = $('#Version');
+    var TimesStamp = $('#TimesStamp');
+    var PartnerId = $('#PartnerId');
+    var method = $('#method');
+    $('#getResult').on('click',function(){
+        var secretV = Secret.val();
+        var versionV = Version.val();
+        var TimesStampV = TimesStamp.val();
+        var partnerIdV = PartnerId.val();
+        var methodV = method.val();
+        var signedV = hex_md5(secretV + versionV + TimesStampV + partnerIdV + methodV + secretV).toUpperCase();
+        var results = "{\r\n    \"Header\":{" + "\r\n"+
+                "       \"Version\":\""+versionV+"\"," +"\r\n"+
+                "       \"Timestamp\":"+TimesStampV+"," +"\r\n"+
+                "       \"PartnerId\":\""+partnerIdV+"\"," +"\r\n"+
+                "       \"Signed\":\""+signedV+"\"," +"\r\n"+
+                "       \"Method\":\""+methodV+"\"\r\n      }," +"\r\n"+
+                "    \"Body\":{" + "\r\n"+
+                "       \"CurrentPage\":"+ 1 + ",\r\n" +
+                "       \"pageSize\":"+ 20 + "\r\n      }\r\n" +
+                "}";
+        $('#result').val(results);
+
+    });
+
+
+    $('#refreshTime').on('click',function(){
+        TimesStamp.val(Date.parse(new Date()) / 1000);
+    });
+</script>
+</html>
